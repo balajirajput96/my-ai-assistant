@@ -22,6 +22,8 @@ pnpm lint
 pnpm test
 ```
 
+The private GitHub repository includes a CI workflow that runs type-checking, linting, and tests on main-branch pushes and pull requests.
+
 The server discovers the available managed model catalog at runtime and selects an economical managed model when available. Model credentials stay server-side. The client intentionally does not accept or persist provider API keys.
 
 ## Architecture and Research

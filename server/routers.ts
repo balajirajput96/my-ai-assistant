@@ -6,6 +6,7 @@ import { invokeLLM, listLLMModels } from "./_core/llm";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { selectManagedModelFromCatalog } from "./assistant-policy";
+import { consumeChatRequest } from "./assistant-rate-limit";
 
 const chatInput = z.object({
   messages: z
@@ -36,8 +37,13 @@ export const appRouter = router({
     }),
   }),
   assistant: router({
-    chat: publicProcedure.input(chatInput).mutation(async ({ input }) => {
+    chat: publicProcedure.input(chatInput).mutation(async ({ input, ctx }) => {
       try {
+        const forwarded = ctx.req.headers["x-forwarded-for"];
+        const clientKey = Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(",")[0]?.trim() || "anonymous";
+        if (!consumeChatRequest(clientKey)) {
+          throw new Error("Too many assistant requests. Please wait a minute and try again.");
+        }
         const model = await selectManagedModel();
         const response = await invokeLLM({
           model,

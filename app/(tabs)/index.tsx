@@ -219,6 +219,14 @@ export default function AssistantScreen() {
             accessibilityLabel="Assistant message"
           />
           <Pressable
+            accessibilityLabel="Attachments are unavailable in this release"
+            onPress={() => Alert.alert("Attachments are not active", "Image and document analysis need secure upload, type validation, and an explicit data disclosure. They are intentionally unavailable in this release.")}
+            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+            className="mb-0.5 h-10 w-10 items-center justify-center rounded-full"
+          >
+            <MaterialIcons name="attach-file" size={22} color="#64748B" />
+          </Pressable>
+          <Pressable
             accessibilityLabel="Voice input will be available after optional setup"
             onPress={() => Alert.alert("Voice input is not active", "This release supports spoken answers. Microphone transcription needs a separate opt-in setup and is currently off.")}
             style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}

@@ -9,11 +9,11 @@
 - [x] Implement activity and diagnostic views with honest provider status and failure recovery guidance.
 - [x] Implement system text-to-speech response playback and a voice-ready composer state.
 - [x] Implement settings, system-theme support, privacy controls, onboarding messaging, and feedback-ready unavailable states.
-- [ ] Add server-side AI provider routing with a free-only policy, validation, rate limits, secret redaction, and safe fallback behavior.
+- [x] Add server-side AI provider routing with a free-only policy, validation, rate limits, secret redaction, and safe fallback behavior.
 - [ ] Add basic document/image attachment intake with explicit capability limits and no false processing claims.
 - [x] Create configuration examples, feature flags, provider registry, developer documentation, and release notes.
-- [ ] Add unit tests and run type-checking, linting, and the test suite.
+- [x] Add unit tests and run type-checking, linting, and the test suite.
 - [ ] Generate original app branding and update all required app icon/configuration assets.
 - [x] Prepare Play Store listing text, privacy/data-safety checklist, and release instructions.
-- [ ] Create a private GitHub repository, push the source, and add CI workflow documentation.
+- [x] Create a private GitHub repository, push the source, and add CI workflow documentation.
 - [ ] Create the final verified project checkpoint and deliver the result.
