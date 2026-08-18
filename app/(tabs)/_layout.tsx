@@ -1,9 +1,9 @@
+import { Platform } from "react-native";
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Platform } from "react-native";
 import { useColors } from "@/hooks/use-colors";
 
 export default function TabLayout() {
@@ -28,13 +28,10 @@ export default function TabLayout() {
         },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Assistant", tabBarIcon: ({ color }) => <IconSymbol size={25} name="message.fill" color={color} /> }} />
+      <Tabs.Screen name="workspace" options={{ title: "Workspace", tabBarIcon: ({ color }) => <IconSymbol size={25} name="folder.fill" color={color} /> }} />
+      <Tabs.Screen name="automations" options={{ title: "Routines", tabBarIcon: ({ color }) => <IconSymbol size={25} name="bolt.fill" color={color} /> }} />
+      <Tabs.Screen name="settings" options={{ title: "Settings", tabBarIcon: ({ color }) => <IconSymbol size={25} name="gearshape.fill" color={color} /> }} />
     </Tabs>
   );
 }

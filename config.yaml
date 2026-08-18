@@ -1,0 +1,36 @@
+app:
+  name: My AI Assistant
+  data_mode: local_first
+  default_language: en
+
+provider_policy:
+  free_only: true
+  allow_external_paid_providers: false
+  auto_upgrade: false
+  runtime_model_discovery: true
+  preferred_managed_model_family: gpt-5-mini
+  fallback_behavior: explicit_unavailable_state
+
+safety:
+  auto_low_risk: true
+  auto_high_risk: false
+  max_retry_count: 3
+  tools_enabled: false
+  external_actions_enabled: false
+  secret_redaction: true
+
+features:
+  chat: true
+  local_memory: true
+  local_routines: true
+  activity_log: true
+  text_to_speech: true
+  voice_input: false
+  document_analysis: false
+  image_analysis: false
+  web_research: false
+  github_integration: false
+  mcp_integration: false
+  cloud_sync: false
+  scheduler: false
+
