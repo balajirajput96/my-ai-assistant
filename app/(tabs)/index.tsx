@@ -1,4 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as DocumentPicker from "expo-document-picker";
 import * as Speech from "expo-speech";
 import { router } from "expo-router";
 import { useMemo, useRef, useState } from "react";
@@ -24,6 +25,19 @@ const quickPrompts = [
   "Help me turn an idea into a small plan",
   "Explain a technical concept simply",
 ];
+
+const MAX_ATTACHMENT_BYTES = 16 * 1024 * 1024;
+
+type AttachmentDraft = {
+  name: string;
+  mimeType: string;
+  size: number;
+  uri: string;
+};
+
+function formatFileSize(size: number) {
+  return size < 1024 * 1024 ? `${Math.max(1, Math.round(size / 1024))} KB` : `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 function MessageBubble({ message, onSpeak, speechEnabled }: { message: Message; onSpeak: (message: Message) => void; speechEnabled: boolean }) {
   const isUser = message.role === "user";
@@ -51,6 +65,7 @@ export default function AssistantScreen() {
   const { store, isReady, createConversation, addActivity, addMessage } = useAssistantStore();
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [attachment, setAttachment] = useState<AttachmentDraft | null>(null);
   const listRef = useRef<FlatList<Message>>(null);
   const chat = trpc.assistant.chat.useMutation();
 
@@ -63,9 +78,45 @@ export default function AssistantScreen() {
     [activeConversation, store.messages],
   );
 
-  const send = async (rawText = draft) => {
+  const pickAttachment = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ["application/pdf", "image/*", "text/plain", "text/csv", "application/json"],
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled) return;
+      const asset = result.assets[0];
+      const size = asset.size ?? 0;
+      if (size > MAX_ATTACHMENT_BYTES) {
+        Alert.alert("File is too large", "Choose a file smaller than 16 MB. It has not been uploaded or sent.");
+        return;
+      }
+      setAttachment({
+        name: asset.name,
+        mimeType: asset.mimeType ?? "unknown type",
+        size,
+        uri: asset.uri,
+      });
+    } catch {
+      Alert.alert("Could not select the file", "The file picker did not return a usable attachment. Nothing was uploaded or sent.");
+    }
+  };
+
+  const send = async (rawText = draft, sendWithoutAttachment = false) => {
     const content = rawText.trim();
     if (!content || chat.isPending) return;
+    if (attachment && !sendWithoutAttachment) {
+      Alert.alert(
+        "Attachment analysis is not enabled",
+        `“${attachment.name}” remains only in this device’s temporary cache. It will not be uploaded or analysed in this release.`,
+        [
+          { text: "Keep editing", style: "cancel" },
+          { text: "Send text only", onPress: () => void send(content, true) },
+        ],
+      );
+      return;
+    }
+    if (sendWithoutAttachment) setAttachment(null);
     setDraft("");
     let conversation = activeConversation;
     if (!conversation) {
@@ -205,6 +256,18 @@ export default function AssistantScreen() {
             <Text className="text-sm text-muted">Thinking with the managed provider…</Text>
           </View>
         ) : null}
+        {attachment ? (
+          <View className="mb-2 flex-row items-center rounded-2xl border border-[#F1C879] bg-[#FFF8E6] px-3 py-2">
+            <MaterialIcons name="insert-drive-file" size={19} color="#A76700" />
+            <View className="ml-2 flex-1">
+              <Text numberOfLines={1} className="text-sm font-semibold text-[#805200]">{attachment.name}</Text>
+              <Text className="mt-0.5 text-xs text-[#805200]">{attachment.mimeType} · {formatFileSize(attachment.size)} · not uploaded</Text>
+            </View>
+            <Pressable accessibilityLabel="Remove selected attachment" onPress={() => setAttachment(null)} style={({ pressed }) => ({ opacity: pressed ? 0.55 : 1 })} className="h-8 w-8 items-center justify-center rounded-full">
+              <MaterialIcons name="close" size={19} color="#805200" />
+            </Pressable>
+          </View>
+        ) : null}
         <View className="mb-3 flex-row items-end rounded-[24px] bg-surface border border-border px-3 py-2">
           <TextInput
             value={draft}
@@ -219,8 +282,8 @@ export default function AssistantScreen() {
             accessibilityLabel="Assistant message"
           />
           <Pressable
-            accessibilityLabel="Attachments are unavailable in this release"
-            onPress={() => Alert.alert("Attachments are not active", "Image and document analysis need secure upload, type validation, and an explicit data disclosure. They are intentionally unavailable in this release.")}
+            accessibilityLabel="Select a local attachment"
+            onPress={() => void pickAttachment()}
             style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
             className="mb-0.5 h-10 w-10 items-center justify-center rounded-full"
           >

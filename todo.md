@@ -10,7 +10,7 @@
 - [x] Implement system text-to-speech response playback and a voice-ready composer state.
 - [x] Implement settings, system-theme support, privacy controls, onboarding messaging, and feedback-ready unavailable states.
 - [x] Add server-side AI provider routing with a free-only policy, validation, rate limits, secret redaction, and safe fallback behavior.
-- [ ] Add basic document/image attachment intake with explicit capability limits and no false processing claims.
+- [x] Add basic document/image attachment intake with explicit capability limits and no false processing claims.
 - [x] Create configuration examples, feature flags, provider registry, developer documentation, and release notes.
 - [x] Add unit tests and run type-checking, linting, and the test suite.
 - [ ] Generate original app branding and update all required app icon/configuration assets.
