@@ -2,7 +2,7 @@
 
 ## Scheduled Maintenance Cycle
 
-The GitHub maintenance workflow is designed to run a bounded deterministic cycle. It loads the checked-in maintenance manifest, attempts to retrieve the latest non-expired state artifact, installs the locked dependencies, performs validation, writes a fresh machine-readable state summary, and uploads that summary for up to 100 days.
+The GitHub maintenance workflow is designed to run a bounded deterministic cycle. It loads the checked-in maintenance manifest, attempts to retrieve the latest non-expired state artifact, installs the locked dependencies, performs validation, writes a fresh machine-readable state summary, and uploads that summary for up to 100 days. Each state record carries a cycle number, prior commit reference when available, and a `continuationLimitReached` flag at the intended 2,400-cycle boundary.
 
 The workflow intentionally **does not** commit repairs, push branches, alter repository settings, publish the app, rotate credentials, or enable integrations. A failed cycle is an actionable signal for a reviewed engineering repair; it is not permission to make autonomous external changes.
 
