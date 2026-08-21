@@ -22,3 +22,7 @@
 - [x] Complete secure document and image attachment intake with validated capability limits and truthful processing states.
 - [ ] Finalize the generated branding asset in every required native icon location and verify the release configuration.
 - [ ] Inspect configured connectors and establish a safe, scoped recurring maintenance schedule when the available configuration supports it.
+- [x] Create a secret-safe maintenance manifest that preserves project-relevant procedures, validation commands, Git history references, and recovery steps.
+- [x] Audit project-relevant scripts, configuration, CI, repository branches, and available developer CLIs without exporting terminal history or credentials.
+- [x] Add a bounded GitHub maintenance workflow with explicit permissions, deterministic validation, state artifacts, and no automatic secret or deployment changes.
+- [x] Validate all maintained GitHub workflows and record supported integration constraints without scraping API keys or bypassing authentication.

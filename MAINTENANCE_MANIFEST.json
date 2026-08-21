@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "project": "My AI Assistant",
+  "statePolicy": "Project-relevant state only; never store credentials, terminal history, cookies, raw secrets, or unrelated machine data.",
+  "validation": [
+    "pnpm check",
+    "pnpm lint",
+    "pnpm test",
+    "pnpm build",
+    "npx expo export --platform android"
+  ],
+  "repairPolicy": {
+    "automaticCodeChanges": false,
+    "automaticPublishing": false,
+    "automaticSecretChanges": false,
+    "automaticConnectorChanges": false,
+    "requiredBeforePush": [
+      "Rebase onto the latest github/main",
+      "Run every validation command successfully",
+      "Review the diff for secrets and unrelated files"
+    ]
+  },
+  "continuation": {
+    "schedule": "hourly GitHub Actions maintenance validation",
+    "stateArtifact": "maintenance-state",
+    "retentionDays": 100,
+    "maxIntendedCycles": 2400
+  }
+}

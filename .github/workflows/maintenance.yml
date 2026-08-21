@@ -1,0 +1,62 @@
+name: Scheduled Maintenance Validation
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: scheduled-maintenance-validation
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate and record safe state
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load latest maintenance state when available
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          artifact_id="$(gh api "repos/${REPOSITORY}/actions/artifacts?name=maintenance-state&per_page=100" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')"
+          if [ -n "$artifact_id" ]; then
+            mkdir -p prior-maintenance-state
+            gh api "repos/${REPOSITORY}/actions/artifacts/${artifact_id}/zip" > prior-maintenance-state/artifact.zip
+            unzip -q prior-maintenance-state/artifact.zip -d prior-maintenance-state
+            echo "MAINTENANCE_PRIOR_STATE_PATH=${GITHUB_WORKSPACE}/prior-maintenance-state/maintenance-state.json" >> "$GITHUB_ENV"
+          fi
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - run: npx expo export --platform android
+
+      - name: Write machine-readable maintenance state
+        if: always()
+        run: pnpm maintenance:state
+
+      - name: Preserve maintenance state
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maintenance-state
+          path: maintenance-state/maintenance-state.json
+          retention-days: 100
+          if-no-files-found: error
