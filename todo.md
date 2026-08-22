@@ -30,3 +30,6 @@
 - [x] Verify the scheduled state-record continuation path and refine only reproducible, non-secret maintenance gaps.
 - [x] Repair verified repository, CI, dependency, or application failures with bounded retries and complete validation.
 - [ ] Synchronize the next verified master-maintenance update to GitHub with a checkpointed recovery point.
+- [ ] Finalize the original generated app icon in all native asset locations and verify release configuration.
+- [ ] Run final release-ready validation, synchronize all remaining verified work to GitHub, and confirm CI success.
+- [ ] Establish task-level maintenance scheduling after the user publishes the project from the Management UI.
